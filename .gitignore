@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+temp.jpg
+.DS_Store
+dataset/
+processed_dataset/
+*.pyc
+best_model.keras
+civical-admin.json

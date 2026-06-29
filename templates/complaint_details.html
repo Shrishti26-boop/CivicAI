@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Complaint Details</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+background:#f0fdf4;
+
+}
+
+.container{
+
+width:70%;
+margin:auto;
+margin-top:40px;
+
+background:white;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0 0 10px rgba(0,0,0,.2);
+
+}
+
+img{
+
+width:100%;
+max-width:500px;
+
+border-radius:10px;
+
+}
+
+h2{
+
+color:#166534;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>{{ complaint.title }}</h2>
+
+<img src="{{ url_for('static', filename=complaint.image) }}">
+
+<h3>Description</h3>
+
+<p>
+
+{{ complaint.description }}
+
+</p>
+
+<h3>Category</h3>
+
+<p>
+
+{{ complaint.category }}
+
+</p>
+
+<h3>Status</h3>
+
+<p>
+
+{{ complaint.status }}
+
+</p>
+
+<h3>Priority</h3>
+
+<p>
+
+{{ complaint.priority }}
+
+</p>
+
+<a href="/my-complaints">
+
+⬅ Back
+
+</a>
+
+</div>
+
+</body>
+
+</html>

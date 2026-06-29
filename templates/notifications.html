@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notifications | CivicAI</title>
+
+<style>
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f3f4f6;
+    margin:0;
+}
+
+.navbar{
+    background:#16a34a;
+    color:white;
+    padding:18px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.container{
+    width:80%;
+    margin:40px auto;
+}
+
+.card{
+
+    background:white;
+
+    padding:20px;
+
+    margin-bottom:20px;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
+
+    border-left:6px solid #16a34a;
+
+}
+
+.message{
+
+    font-size:18px;
+
+    color:#333;
+
+    margin-bottom:10px;
+
+}
+
+.time{
+
+    color:gray;
+
+    font-size:14px;
+
+}
+
+.empty{
+
+    text-align:center;
+
+    padding:40px;
+
+    background:white;
+
+    border-radius:12px;
+
+    font-size:20px;
+
+    color:gray;
+
+}
+
+.back{
+
+    display:inline-block;
+
+    margin-bottom:20px;
+
+    text-decoration:none;
+
+    background:#16a34a;
+
+    color:white;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+}
+
+.back:hover{
+
+    background:#15803d;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+🔔 CivicAI Notifications
+
+</div>
+
+<div class="container">
+
+<a href="/dashboard" class="back">
+
+← Back to Dashboard
+
+</a>
+
+{% if notifications %}
+
+    {% for n in notifications %}
+
+    <div class="card">
+
+        <div class="message">
+
+            {{ n.message }}
+
+        </div>
+
+        <div class="time">
+
+            {{ n.created_at }}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="empty">
+
+📭 No Notifications Yet
+
+</div>
+
+{% endif %}
+
+</div>
+
+</body>
+
+</html>

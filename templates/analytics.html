@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Analytics</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+
+font-family:Arial;
+
+background:#eef2f7;
+
+margin:0;
+
+}
+
+.header{
+
+background:#16a34a;
+
+padding:20px;
+
+color:white;
+
+text-align:center;
+
+font-size:30px;
+
+font-weight:bold;
+
+}
+
+.container{
+
+width:90%;
+
+margin:auto;
+
+margin-top:30px;
+
+}
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:20px;
+
+}
+
+.card{
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+text-align:center;
+
+box-shadow:0 5px 12px rgba(0,0,0,.15);
+
+}
+
+.card h1{
+
+font-size:42px;
+
+margin:0;
+
+color:#16a34a;
+
+}
+
+.card p{
+
+font-size:20px;
+
+}
+
+.chart-box{
+
+margin-top:40px;
+
+background:white;
+
+padding:20px;
+
+border-radius:15px;
+
+box-shadow:0 5px 12px rgba(0,0,0,.15);
+
+}
+
+canvas{
+
+max-width:800px;
+
+margin:auto;
+
+display:block;
+
+}
+
+.btn{
+
+display:inline-block;
+
+margin-top:20px;
+
+padding:12px 25px;
+
+background:#16a34a;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:10px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+📊 CivicAI Analytics Dashboard
+
+</div>
+
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+
+<h1>{{total}}</h1>
+
+<p>Total Complaints</p>
+
+</div>
+
+<div class="card">
+
+<h1>{{pending}}</h1>
+
+<p>Pending</p>
+
+</div>
+
+<div class="card">
+
+<h1>{{resolved}}</h1>
+
+<p>Resolved</p>
+
+</div>
+
+<div class="card">
+
+<h1>{{rejected}}</h1>
+
+<p>Rejected</p>
+
+</div>
+
+</div>
+
+<div class="chart-box">
+
+<canvas id="pieChart"></canvas>
+
+</div>
+
+<div class="chart-box">
+
+<canvas id="barChart"></canvas>
+
+</div>
+
+<a href="/officer-dashboard" class="btn">
+
+⬅ Back
+
+</a>
+
+</div>
+
+<script>
+const pieCtx = document.getElementById("pieChart");
+
+new Chart(pieCtx, {
+    type: "pie",
+    data: {
+        labels: ["Pothole", "Garbage", "Street Light", "Water Leakage"],
+        datasets: [{
+            data: [
+                Number("{{ pothole }}"),
+                Number("{{ garbage }}"),
+                Number("{{ streetlight }}"),
+                Number("{{ water }}")
+            ]
+        }]
+    },
+    options: {
+        responsive: true
+    }
+});
+
+const barCtx = document.getElementById("barChart");
+
+new Chart(barCtx, {
+    type: "bar",
+    data: {
+        labels: ["Pending", "Resolved", "Rejected"],
+        datasets: [{
+            label: "Complaints",
+            data: [
+                Number("{{ pending }}"),
+                Number("{{ resolved }}"),
+                Number("{{ rejected }}")
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+</body>
+
+</html>

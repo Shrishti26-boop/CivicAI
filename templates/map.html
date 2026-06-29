@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CivicAI Complaint Map</title>
+
+    <!-- OpenLayers CSS -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+
+    <!-- OpenLayers JS -->
+    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:Arial,Helvetica,sans-serif;
+        }
+
+        #map{
+            width:100%;
+            height:100vh;
+        }
+
+        .top-btn{
+
+            position:absolute;
+
+            top:20px;
+            left:20px;
+
+            z-index:1000;
+
+            background:#2563eb;
+
+            color:white;
+
+            border:none;
+
+            padding:12px 20px;
+
+            border-radius:8px;
+
+            cursor:pointer;
+
+            font-size:15px;
+        }
+
+        .popup img{
+
+            width:180px;
+
+            border-radius:8px;
+
+            margin-top:10px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<button class="top-btn" onclick="showNearby()">
+
+📍 Nearby Complaints
+
+</button>
+
+<div id="map"></div>
+
+<script id="complaints-data" type="application/json">
+
+{{ complaints | tojson | safe }}
+
+</script>
+
+<script>
+
+let map;
+
+let complaints=[];
+
+let userLocation=null;
+
+let vectorSource=new ol.source.Vector();
+
+let vectorLayer=new ol.layer.Vector({
+
+    source:vectorSource
+
+});
+
+// ==========================
+// INIT MAP
+// ==========================
+
+function initMap(){
+
+    complaints=JSON.parse(
+
+        document.getElementById("complaints-data").textContent
+
+    );
+
+    map=new ol.Map({
+
+        target:"map",
+
+        layers:[
+
+            new ol.layer.Tile({
+
+                source:new ol.source.OSM()
+
+            }),
+
+            vectorLayer
+
+        ],
+
+        view:new ol.View({
+
+            center:ol.proj.fromLonLat([77.2090,28.6139]),
+
+            zoom:12
+
+        })
+
+    });
+
+    showUserLocation();
+
+}
+// ==========================
+// USER LOCATION
+// ==========================
+
+function showUserLocation(){
+
+    if(!navigator.geolocation){
+
+        loadComplaints();
+
+        return;
+
+    }
+
+    navigator.geolocation.getCurrentPosition(function(position){
+
+        userLocation={
+
+            lat:position.coords.latitude,
+
+            lng:position.coords.longitude
+
+        };
+
+        const feature=new ol.Feature({
+
+            geometry:new ol.geom.Point(
+
+                ol.proj.fromLonLat([
+
+                    userLocation.lng,
+
+                    userLocation.lat
+
+                ])
+            )
+
+        });
+
+        feature.setStyle(
+
+            new ol.style.Style({
+
+                image:new ol.style.Circle({
+
+                    radius:8,
+
+                    fill:new ol.style.Fill({
+
+                        color:"blue"
+
+                    }),
+
+                    stroke:new ol.style.Stroke({
+
+                        color:"white",
+
+                        width:2
+
+                    })
+
+                })
+
+            })
+
+        );
+
+        vectorSource.addFeature(feature);
+
+        map.getView().animate({
+
+            center:ol.proj.fromLonLat([
+
+                userLocation.lng,
+
+                userLocation.lat
+
+            ]),
+
+            zoom:14
+
+        });
+
+        loadComplaints();
+
+    });
+
+}
+
+
+
+// ==========================
+// MARKER COLORS
+// ==========================
+
+function getColor(category){
+
+    category=(category||"").toLowerCase();
+
+    if(category.includes("garbage"))
+        return "green";
+
+    if(category.includes("water"))
+        return "blue";
+
+    if(category.includes("electric"))
+        return "yellow";
+
+    if(category.includes("pothole"))
+        return "red";
+
+    return "orange";
+
+}
+
+
+
+// ==========================
+// LOAD COMPLAINTS
+// ==========================
+
+function loadComplaints(){
+
+    complaints.forEach(c=>{
+
+        if(!c.latitude || !c.longitude)
+            return;
+
+        const feature=new ol.Feature({
+
+            geometry:new ol.geom.Point(
+
+                ol.proj.fromLonLat([
+
+                    Number(c.longitude),
+
+                    Number(c.latitude)
+
+                ])
+
+            )
+
+        });
+
+        feature.set("data",c);
+
+        feature.setStyle(
+
+            new ol.style.Style({
+
+                image:new ol.style.Circle({
+
+                    radius:7,
+
+                    fill:new ol.style.Fill({
+
+                        color:getColor(c.category)
+
+                    }),
+
+                    stroke:new ol.style.Stroke({
+
+                        color:"white",
+
+                        width:2
+
+                    })
+
+                })
+
+            })
+
+        );
+
+        vectorSource.addFeature(feature);
+
+    });
+
+}
+
+
+
+// ==========================
+// CLICK POPUP
+// ==========================
+
+map.on("click",function(evt){
+
+    map.forEachFeatureAtPixel(evt.pixel,function(feature){
+
+        const c=feature.get("data");
+
+        if(!c) return;
+
+        alert(
+
+            "📍 "+(c.title||"Complaint")+
+
+            "\n\nCategory : "+(c.category||"N/A")+
+
+            "\nStatus : "+(c.status||"Pending")
+
+        );
+
+    });
+
+});
+
+
+
+// ==========================
+// NEARBY
+// ==========================
+
+function showNearby(){
+
+    if(!userLocation){
+
+        alert("Location not found");
+
+        return;
+
+    }
+
+    let count=0;
+
+    complaints.forEach(c=>{
+
+        if(!c.latitude || !c.longitude)
+            return;
+
+        let d=getDistance(
+
+            userLocation.lat,
+
+            userLocation.lng,
+
+            Number(c.latitude),
+
+            Number(c.longitude)
+
+        );
+
+        if(d<=2)
+            count++;
+
+    });
+
+    alert("Nearby complaints within 2 KM : "+count);
+
+}
+
+
+
+// ==========================
+// DISTANCE
+// ==========================
+
+function getDistance(lat1,lon1,lat2,lon2){
+
+    const R=6371;
+
+    const dLat=(lat2-lat1)*Math.PI/180;
+
+    const dLon=(lon2-lon1)*Math.PI/180;
+
+    const a=
+
+        Math.sin(dLat/2)**2+
+
+        Math.cos(lat1*Math.PI/180)*
+
+        Math.cos(lat2*Math.PI/180)*
+
+        Math.sin(dLon/2)**2;
+
+    return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+
+}
+
+
+
+// START
+
+initMap();
+
+</script>
+
+</body>
+</html>

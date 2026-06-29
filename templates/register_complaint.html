@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Register Complaint</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+background:#f0fdf4;
+
+}
+
+.container{
+
+width:700px;
+margin:auto;
+margin-top:40px;
+
+background:white;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0 0 10px rgba(0,0,0,.2);
+
+}
+
+input,textarea,select{
+
+width:100%;
+
+padding:12px;
+
+margin:10px 0;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+}
+
+
+button{
+
+background:#16a34a;
+
+color:white;
+
+padding:15px;
+
+width:100%;
+
+border:none;
+
+border-radius:8px;
+
+font-size:18px;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#15803d;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Register Civic Complaint</h2>
+
+<form
+action="/api/register-complaint"
+method="POST"
+enctype="multipart/form-data" >
+<input type="hidden" name="latitude" id="latitude">
+<input type="hidden" name="longitude" id="longitude">
+<input
+type="text"
+name="title"
+placeholder="Complaint Title"
+required>
+
+<textarea
+name="description"
+rows="5"
+placeholder="Describe the issue..."
+required></textarea>
+
+
+
+<select name="category" id="category">
+
+<option value="pothole">Pothole</option>
+
+<option value="garbage">Garbage</option>
+
+<option value="water_leakage">Water Leakage</option>
+
+<option value="streetlight">Street Light</option>
+
+<option value="road_damage">Road Damage</option>
+
+<option value="others">Others</option>
+
+</select>
+
+
+
+<label>
+
+Upload Image
+
+</label>
+
+<input
+type="file"
+id="image"
+name="image"
+accept="image/*"
+required>
+<img
+id="preview"
+width="250"
+style="display:none;margin-top:20px;border-radius:10px;">
+<div
+id="aiResult"
+style="
+display:none;
+margin-top:20px;
+padding:15px;
+background:#dcfce7;
+border-radius:10px;
+font-weight:bold;
+">
+</div>
+
+<input
+type="hidden"
+id="latitude"
+name="latitude">
+
+<input
+type="hidden"
+id="longitude"
+name="longitude">
+
+<button>
+
+Submit Complaint
+
+</button>
+
+</form>
+
+</div>
+
+<script>
+
+// GPS
+navigator.geolocation.getCurrentPosition(function(position){
+
+document.getElementById("latitude").value =
+position.coords.latitude;
+
+document.getElementById("longitude").value =
+position.coords.longitude;
+
+});
+
+
+// AI Prediction
+
+document.getElementById("image").addEventListener("change", async function(){
+
+const file = this.files[0];
+
+if(!file) return;
+
+// Preview
+
+const preview=document.getElementById("preview");
+
+preview.src=URL.createObjectURL(file);
+
+preview.style.display="block";
+
+
+// Send image to Flask
+
+const formData=new FormData();
+
+formData.append("image",file);
+
+const response=await fetch("/predict",{
+
+method:"POST",
+
+body:formData
+
+});
+
+const data=await response.json();
+
+if(data.category){
+
+document.getElementById("category").value=data.category;
+
+document.getElementById("aiResult").style.display="block";
+
+document.getElementById("aiResult").innerHTML=
+
+"🤖 AI Detected : <b>"+data.category+"</b><br><br>Confidence : "+data.confidence+"%";
+
+}
+
+});
+
+window.onload = function () {
+
+    if (navigator.geolocation) {
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+
+            document.getElementById("latitude").value =
+                position.coords.latitude;
+
+            document.getElementById("longitude").value =
+                position.coords.longitude;
+
+            console.log("Latitude:", position.coords.latitude);
+            console.log("Longitude:", position.coords.longitude);
+
+        }, function(error) {
+
+            alert("Please allow location permission.");
+
+        });
+
+    } else {
+
+        alert("Geolocation is not supported.");
+
+    }
+
+};
+
+
+</script>
+
+</body>
+
+</html>

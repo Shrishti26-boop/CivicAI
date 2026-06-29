@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CivicAI Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+
+    <style>
+        .stat-card {
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <h2>🚀 CivicAI</h2>
+
+    <div>
+        Welcome, <b>{{ name }}</b>
+        <a class="logout" href="/logout">Logout</a>
+    </div>
+</div>
+
+<!-- MAIN CONTAINER -->
+<div class="container">
+
+    <h1>Citizen Dashboard</h1>
+
+    <!-- STATS -->
+    <div class="stats">
+
+        <div class="stat-card">
+            <h2>{{ total }}</h2>
+            <p>📋 Total Complaints</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ pending }}</h2>
+            <p>⏳ Pending</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ resolved }}</h2>
+            <p>✅ Resolved</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ points }}</h2>
+            <p>⭐ Reward Points</p>
+        </div>
+
+        <div class="stat-card">
+            <h2>{{ badge }}</h2>
+            <p>🏅 Badge</p>
+        </div>
+
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards">
+
+        <div class="card">
+            <div style="font-size:55px;">👮</div>
+            <a href="/officer-dashboard">Officer Dashboard</a>
+            <p>Manage all complaints</p>
+        </div>
+
+        <div class="card">
+            <div style="font-size:55px;">📝</div>
+            <a href="/register-complaint">Register Complaint</a>
+            <p>Report a new civic issue.</p>
+        </div>
+
+        <div class="card">
+            <div style="font-size:55px;">📋</div>
+            <a href="/my-complaints">My Complaints</a>
+            <p>Track all your complaints.</p>
+        </div>
+
+        <div class="card">
+            <div style="font-size:55px;">📍</div>
+            <a href="/nearby">Nearby Issues</a>
+            <p>View complaints around you.</p>
+        </div>
+
+        <div class="card">
+            <div style="font-size:55px;">👤</div>
+            <a href="/profile">My Profile</a>
+            <p>Manage your account.</p>
+        </div>
+
+        <div class="card">
+            <div style="font-size:55px;">📊</div>
+            <a href="/analytics">Analytics</a>
+            <p>View complaint statistics.</p>
+        </div>
+
+        <div class="card">
+
+    <div style="font-size:55px;">🗺️</div>
+
+    <a href="/nearby">
+        Live Complaint Map
+    </a>
+
+    <p>
+        View all complaints on an interactive map.
+    </p>
+
+</div>
+
+        <!-- AI PREDICTION CARD -->
+        <div class="card">
+
+            <div style="font-size:55px;">🤖</div>
+
+            <h3>AI Prediction</h3>
+
+            <input type="file" id="imageInput" accept="image/*" style="margin-top:10px;">
+
+            <button onclick="predict()" style="
+                margin-top:10px;
+                background:#16a34a;
+                color:white;
+                border:none;
+                padding:10px 15px;
+                border-radius:8px;
+                cursor:pointer;
+            ">
+                Predict
+            </button>
+
+            <p id="result" style="
+                margin-top:12px;
+                font-weight:bold;
+                color:#16a34a;
+            "></p>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================
+     AI PREDICTION SCRIPT
+========================= -->
+<script>
+function predict(){
+
+    let file = document.getElementById("imageInput").files[0];
+
+    if(!file){
+        alert("Please select an image first.");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("image", file);
+
+    fetch("/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.category){
+
+            document.getElementById("result").innerHTML =
+                "🔥 " + data.category +
+                "<br>Confidence: " +
+                (data.confidence || 0) + "%";
+
+        } else {
+            document.getElementById("result").innerHTML =
+                "❌ Prediction Failed";
+        }
+
+    })
+    .catch(err => {
+        console.log(err);
+        document.getElementById("result").innerHTML =
+            "❌ Server Error";
+    });
+
+}
+</script>
+
+<!-- OFFICER ONLY CARD -->
+{% if role == "officer" %}
+<div class="card">
+    <div style="font-size:55px;">👮</div>
+    <a href="/officer-dashboard">Officer Dashboard</a>
+    <p>Officer control panel</p>
+</div>
+{% endif %}
+
+</body>
+</html>

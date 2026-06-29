@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+</head>
+<body>
+
+<div class="auth-container">
+<div class="auth-box">
+
+<h1>Create Account</h1>
+
+<form action="/api/register" method="POST">
+
+<input type="text" name="name" placeholder="Name" required>
+<input type="email" name="email" placeholder="Email" required>
+<input type="password" name="password" placeholder="Password" required>
+
+<select name="role">
+    <option value="citizen">Citizen</option>
+    <option value="officer">Officer</option>
+</select>
+
+<button type="submit">Register</button>
+
+</form>
+
+<p>
+Already have an account?
+<a href="{{ url_for('login_page') }}">Login</a>
+</p>
+
+</div>
+</div>
+
+</body>
+</html>

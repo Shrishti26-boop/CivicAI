@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>My Complaints</title>
+
+<style>
+
+body{
+    font-family:Arial;
+    background:#f0fdf4;
+    margin:0;
+}
+
+.navbar{
+    background:#166534;
+    color:white;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.container{
+    width:95%;
+    margin:30px auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0 0 10px rgba(0,0,0,.15);
+}
+
+th{
+    background:#16a34a;
+    color:white;
+    padding:15px;
+}
+
+td{
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid #ddd;
+}
+
+tr:hover{
+    background:#f8fff8;
+}
+
+img{
+    width:120px;
+    height:90px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.status{
+    padding:6px 14px;
+    border-radius:20px;
+    color:white;
+    font-size:14px;
+}
+
+.pending{
+    background:orange;
+}
+
+.progress{
+    background:#2563eb;
+}
+
+.resolved{
+    background:#16a34a;
+}
+
+.back{
+    text-decoration:none;
+    color:white;
+    background:#22c55e;
+    padding:10px 18px;
+    border-radius:8px;
+}
+
+.back:hover{
+    background:#15803d;
+}
+
+.action-btn{
+    display:block;
+    text-decoration:none;
+    color:white;
+    margin:5px auto;
+    padding:8px;
+    border-radius:6px;
+    width:90px;
+    font-size:14px;
+}
+
+.view{
+    background:#2563eb;
+}
+
+.edit{
+    background:#f59e0b;
+}
+
+.delete{
+    background:#dc2626;
+}
+
+.map{
+    background:#16a34a;
+}
+
+.ai{
+    background:#7c3aed;
+}
+
+.action-btn:hover{
+    opacity:.85;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+<h2>📋 My Complaints</h2>
+
+<a href="/dashboard" class="back">
+🏠 Dashboard
+</a>
+
+</div>
+
+<div class="container">
+
+<table>
+
+<tr>
+
+<th>Image</th>
+
+<th>Title</th>
+
+<th>Category</th>
+
+<th>Status</th>
+
+<th>Priority</th>
+
+<th>Date</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for complaint in complaints %}
+
+<tr>
+
+<td>
+
+<img src="{{ complaint.image_url }}" width="200">
+
+</td>
+
+<td>
+
+{{ complaint.title }}
+
+</td>
+
+<td>
+
+{{ complaint.category }}
+
+</td>
+
+<td>
+
+<span class="status
+{% if complaint.status=='Pending' %}
+pending
+{% elif complaint.status=='In Progress' %}
+progress
+{% else %}
+resolved
+{% endif %}
+">
+
+{{ complaint.status }}
+
+</span>
+
+</td>
+
+<td>
+
+{{ complaint.priority }}
+
+</td>
+
+<td>
+
+{{ complaint.created_at.strftime("%d-%m-%Y") }}
+
+</td>
+
+<td>
+
+<a href="/complaint/{{ complaint.id }}" class="action-btn view">
+👁 View
+</a>
+
+{% if complaint.status=="Pending" %}
+
+<a href="/edit-complaint/{{ complaint.id }}" class="action-btn edit">
+✏ Edit
+</a>
+
+<a href="/delete-complaint/{{ complaint.id }}"
+class="action-btn delete"
+onclick="return confirm('Delete this complaint?')">
+🗑 Delete
+</a>
+
+{% endif %}
+
+<a href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}"
+target="_blank"
+class="action-btn map">
+📍 Map
+</a>
+
+<a href="/ai-result/{{ complaint.id }}"
+class="action-btn ai">
+🤖 AI
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+
+</html>

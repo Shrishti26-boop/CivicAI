@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicAI - Smart Community Problem Solver</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<nav class="navbar">
+
+<div class="logo">
+CivicAI
+</div>
+<ul class="nav-links">
+
+    <li><a href="/">Home</a></li>
+
+    <li><a href="#features">Features</a></li>
+
+    {% if session.get("user_email") %}
+
+        <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+
+        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+        <li><a href="{{ url_for('leaderboard') }}">Leaderboard</a></li>
+        <li>
+    <a href="{{ url_for('notifications') }}">
+         Notifications
+    </a>
+</li>
+<a href="/login" class="btn">Get Started</a>
+
+<a href="/nearby" class="btn">Explore Live Map</a>
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        
+
+    {% else %}
+
+        <li><a href="{{ url_for('login_page') }}">Login</a></li>
+
+        <li><a href="{{ url_for('register_page') }}">Register</a></li>
+
+    {% endif %}
+
+</ul>
+
+</nav>
+
+<section class="hero">
+
+<div class="hero-content">
+
+<h1>
+AI Powered Community Issue Resolution Platform
+</h1>
+
+<p>
+Detect, Report, Verify and Resolve civic issues using Artificial Intelligence.
+</p>
+
+<div class="buttons">
+<a href="{{ url_for('register_page') }}" class="btn-primary">Get Started</a>
+<a href="#features" class="btn-secondary">Learn More</a>
+</div>
+
+</div>
+
+</section>
+
+<section class="stats">
+
+<div class="stat-card">
+<h2>500+</h2>
+<p>Issues Resolved</p>
+</div>
+
+<div class="stat-card">
+<h2>1200+</h2>
+<p>Citizens</p>
+</div>
+
+<div class="stat-card">
+<h2>95%</h2>
+<p>Success Rate</p>
+</div>
+
+</section>
+
+<section id="features" class="features">
+
+<h2>Platform Features</h2>
+
+<div class="feature-grid">
+
+<div class="feature-card">
+<h3>AI Issue Detection</h3>
+<p>Automatically classify potholes, garbage, leaks and more.</p>
+</div>
+
+<div class="feature-card">
+<h3>Smart Prioritization</h3>
+<p>AI ranks issues by urgency and impact.</p>
+</div>
+
+<div class="feature-card">
+<h3>Geo Tracking</h3>
+<p>Live map-based issue monitoring.</p>
+</div>
+
+<div class="feature-card">
+<h3>Community Verification</h3>
+<p>Citizens validate reports collaboratively.</p>
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+<p>© 2026 CivicAI. All Rights Reserved.</p>
+
+</footer>
+
+</body>
+</html>
