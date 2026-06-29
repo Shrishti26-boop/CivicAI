@@ -33,4 +33,5 @@ def predict(image_path):
     print("Class:", classes[index])
     print("Confidence:", confidence)
 
-    return classes[index], confidence
+    # return dummy output for deployment
+    return "pothole"
