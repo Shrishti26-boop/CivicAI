@@ -7,7 +7,7 @@ import traceback
 import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
-import tensorflow as tf
+# import tensorflow as tf  (disabled for deployment)
 import cv2
 import numpy as np
 from predict import predict
